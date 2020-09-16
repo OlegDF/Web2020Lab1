@@ -8,32 +8,74 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	padding-left: 49px;
+	padding-right: 57px;
+	padding-top: 30px;
+	max-width: 1077px;
+	margin: 0 auto;
 }
 
 .local_box {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	width: 100%;
+	margin-bottom: 45px;
 }
 
 .local_box .weather_icon {
 	width: 140px;
 	height: 140px;
+	margin-right: 110px;
 }
 
 .local_weather_header {
+	margin-bottom: 30px;
 	display: flex;
 	flex-direction: row;
+	justify-content: space-between;
+	align-self: flex-start;
+	width: 60%;
+}
+
+.local_weather_header h1, .favorite_title h1 {
+	align-self: flex-start;
+	white-space: nowrap;
+	font-size: 50px;
+	font-family: "Times New Roman", Times, serif;
+	margin: 0;
+	margin-bottom: 30px;
+}
+
+.local_weather_header .reload_button {
+	width: 265px;
+	height: 54px;
+	border-radius: 5px;
+	background-color: rgb(201, 210, 215);
+	color: rgb(112, 128, 128);
+	border: none;
+	font-size: 18px;
+	font-family: "Times New Roman", Times, serif;
 }
 
 .local_box .weather_box {
 	display: flex;
 	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: start;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.local_box .weather_box .city_title h2 {
+	font-size: 50px;
+	margin: 0;
 }
 
 .local_box .weather_box .city_title .weather_indicator {
 	display: flex;
 	flex-direction: row;
+	justify-content: space-between;
 	align-items: center;
 }
 
@@ -46,6 +88,7 @@
 .local_box .weather_box .weather_description {
 	display: flex;
 	flex-direction: column;
+	align-self: flex-end;
 }
 
 .weather_box .weather_description p {
@@ -69,19 +112,42 @@
 	font-weight: bold;
 }
 
+.favorite_title {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	margin-bottom: 30px;
+}
+
+.favorite_title h1 {
+	flex-grow: 5;
+}
+
+.favorite_title input {
+	width: 335px;
+	height: 50px;
+	padding-left: 15px;
+	margin-right: 15px;
+	background-color: rgb(241, 241, 241);
+	color: rgb(112, 128, 128);
+	border: none;
+	font-size: 18px;
+	font-family: "Times New Roman", Times, serif;
+}
+
 .favorite_boxes {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	justify-content: center;
-}
-
-.favorite_title {
-	display: flex;
-	flex-direction: row;
+	justify-content: space-between;
+	width: 100%;
 }
 
 .delete_button, .add_button {
+	margin: 0px;
 	color: white;
 	background-color: rgb(112, 128, 136);
 	font-size: 20px;
@@ -92,18 +158,56 @@
 	line-height: 42px;
 }
 
+.add_button {
+	font-size: 30px;
+	line-height: 40px;
+}
+
 .favorite_boxes .weather_icon {
 	width: 50px;
 	height: 50px;
+	margin-right: 15%;
 }
 
 .favorite_boxes .weather_box .city_title {
 	display: flex;
 	flex-direction: row;
+	justify-content: space-between;
 	align-items: center;
+	margin-bottom: 10px;
+}
+
+.favorite_boxes .weather_box {
+	margin-bottom: 35px;
+}
+
+.favorite_boxes .weather_box .city_title h2 {
+	margin: 0px;
+	font-size: 40px;
+}
+
+.favorite_boxes .weather_box .city_title .temperature {
+	margin: 0px;
+	font-size: 45px;
+	color: rgb(127, 127, 127);
 }
 
 .favorite_boxes .weather_box .city_title .temperature {
 	font-size: 45px;
 	color: rgb(127, 127, 127);
+}
+
+@media screen and (max-width: 768px) {
+	.local_weather_header .reload_button {
+		font-size: 0px;
+		width: 70px;
+		background-image: url("reload_icon.png");
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 54px 54px;
+	}
+	
+	.local_weather_header {
+		width: 80%;
+	}
 }
