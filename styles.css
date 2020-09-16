@@ -1,0 +1,109 @@
+.general_style {
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	background-color: white;
+	color: rgb(112, 128, 128);
+}
+
+.main_part {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.local_box {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.local_box .weather_icon {
+	width: 140px;
+	height: 140px;
+}
+
+.local_weather_header {
+	display: flex;
+	flex-direction: row;
+}
+
+.local_box .weather_box {
+	display: flex;
+	flex-direction: row;
+}
+
+.local_box .weather_box .city_title .weather_indicator {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.local_box .weather_box .city_title .weather_indicator p {
+	font-size: 140px;
+	margin: 0px;
+	color: rgb(127, 127, 127);
+}
+
+.local_box .weather_box .weather_description {
+	display: flex;
+	flex-direction: column;
+}
+
+.weather_box .weather_description p {
+	width: 490px;
+	height: 48px;
+	margin: 0px;
+	margin-bottom: 10px;
+	color: white;
+	background-color: rgb(167, 175, 177);
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.weather_box .weather_description p span {
+	padding: 0px 10px;
+}
+
+.weather_box .weather_description p span:first-child {
+	font-weight: bold;
+}
+
+.favorite_boxes {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.favorite_title {
+	display: flex;
+	flex-direction: row;
+}
+
+.delete_button, .add_button {
+	color: white;
+	background-color: rgb(112, 128, 136);
+	font-size: 20px;
+	width: 42px;
+	height: 42px;
+	border-radius: 21px;
+	text-align: center;
+	line-height: 42px;
+}
+
+.favorite_boxes .weather_icon {
+	width: 50px;
+	height: 50px;
+}
+
+.favorite_boxes .weather_box .city_title {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.favorite_boxes .weather_box .city_title .temperature {
+	font-size: 45px;
+	color: rgb(127, 127, 127);
+}
