@@ -197,7 +197,18 @@
 	color: rgb(127, 127, 127);
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1120px) {
+
+	.main_part {
+		padding-left: 48px;
+		padding-right: 48px;
+		max-width: 480px;
+	}
+	
+	.weather_box .weather_description p {
+		width: 480px;
+	}
+	
 	.local_weather_header .reload_button {
 		font-size: 0px;
 		width: 70px;
@@ -210,4 +221,15 @@
 	.local_weather_header {
 		width: 80%;
 	}
+
+	.local_box .weather_box {
+		justify-content: space-around;
+	}
+
+	.favorite_boxes {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	
 }
