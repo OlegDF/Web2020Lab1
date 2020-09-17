@@ -197,7 +197,7 @@
 	color: rgb(127, 127, 127);
 }
 
-@media screen and (max-width: 1120px) {
+@media screen and (max-width: 1120px), (orientation: portrait) {
 
 	.main_part {
 		padding-left: 48px;
