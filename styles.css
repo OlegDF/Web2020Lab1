@@ -38,11 +38,12 @@
 	width: 60%;
 }
 
-.local_weather_header h1, .favorite_title h1 {
+.local_weather_header h1, .favorite_title h2 {
 	align-self: flex-start;
 	white-space: nowrap;
 	font-size: 50px;
 	font-family: "Times New Roman", Times, serif;
+	font-weight: normal;
 	margin: 0;
 	margin-bottom: 30px;
 }
@@ -67,7 +68,7 @@
 	width: 100%;
 }
 
-.local_box .weather_box .city_title h2 {
+.local_box .weather_box .city_title h3 {
 	font-size: 50px;
 	margin: 0;
 }
@@ -149,6 +150,7 @@
 
 .delete_button, .add_button {
 	margin: 0px;
+	border: none;
 	color: white;
 	background-color: rgb(112, 128, 136);
 	font-size: 20px;
