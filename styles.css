@@ -102,6 +102,7 @@
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
+	font-size: 18px;
 }
 
 .weather_box .weather_description p span {
@@ -192,44 +193,125 @@
 	color: rgb(127, 127, 127);
 }
 
-.favorite_boxes .weather_box .city_title .temperature {
-	font-size: 45px;
-	color: rgb(127, 127, 127);
-}
-
 @media screen and (max-width: 1120px), (orientation: portrait) {
 
 	.main_part {
-		padding-left: 48px;
-		padding-right: 48px;
-		max-width: 480px;
+		padding: 0;
+		padding-top: 5.2vw;
+		max-width: 83.3vw;
+	}
+	
+	.local_box {
+		margin-bottom: 7.8vw;
+		width: 83.3vw;
+	}
+	
+	.local_box .weather_box {
+		width: 83.3vw;
+	}
+
+	.local_box .weather_icon {
+		width: 24.3vw;
+		height: 24.3vw;
+		margin-right: 19.1vw;
 	}
 	
 	.weather_box .weather_description p {
-		width: 480px;
+		width: 83.3vw;
+		height: 8.3vw;
+		margin-bottom: 1.7vw;
+		font-size: 3.1vw;
+	}
+
+	.local_box .weather_box .city_title .weather_indicator p {
+		font-size: 24.3vw;
+	}
+
+	.local_weather_header h1, .favorite_title h1 {
+		font-size: 8.7vw;
+		margin-bottom: 5.2vw;
+	}
+
+	.local_box .weather_box .city_title h2 {
+		font-size: 8.7vw;
 	}
 	
 	.local_weather_header .reload_button {
 		font-size: 0px;
-		width: 70px;
+		width: 12.2vw;
+		height: 9.4vw;
 		background-image: url("reload_icon.png");
 		background-repeat: no-repeat;
 		background-position: center;
-		background-size: 54px 54px;
+		background-size: 9.4vw 9.4vw;
 	}
 	
 	.local_weather_header {
-		width: 80%;
+		width: 80vw;
+		margin-bottom: 5.2vw;
 	}
 
 	.local_box .weather_box {
 		justify-content: space-around;
 	}
 
+	.favorite_title {
+		margin-bottom: 5.2vw;
+	}
+
+	.favorite_title input {
+		width: 60vw;
+		height: 8.7vw;
+		padding-left: 2.6vw;
+		margin-right: 2.6vw;
+		background-color: rgb(241, 241, 241);
+		color: rgb(112, 128, 128);
+		border: none;
+		font-size: 3.1vw;
+		font-family: "Times New Roman", Times, serif;
+	}
+
 	.favorite_boxes {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+	}
+
+	.favorite_boxes .weather_icon {
+		width: 8.7vw;
+		height: 8.7vw;
+		margin-right: 15vw;
+	}
+
+	.favorite_boxes .weather_box .city_title {
+		margin-bottom: 5.8vw;
+	}
+	
+	.favorite_boxes .weather_box {
+		margin-bottom: 6.1vw;
+	}
+	
+	.favorite_boxes .weather_box .city_title h2 {
+		margin: 0px;
+		font-size: 6.9vw;
+	}
+
+	.favorite_boxes .weather_box .city_title .temperature {
+		font-size: 7.8vw;
+	}
+
+	.delete_button, .add_button {
+		font-size: 3.5vw;
+		width: 7.3vw;
+		height: 7.3vw;
+		border-radius: 3.6vw;
+		text-align: center;
+		line-height: 7.3vw;
+	}
+	
+	.add_button {
+		font-size: 5.2vw;
+		line-height: 6.9vw;
 	}
 	
 }
