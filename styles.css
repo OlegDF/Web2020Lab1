@@ -34,8 +34,11 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	align-self: flex-start;
-	width: 60%;
+	padding-left: 49px;
+	padding-right: 257px;
+	padding-top: 30px;
+	max-width: 877px;
+	margin: 0 auto;
 }
 
 .local_weather_header h1, .favorite_title h2 {
@@ -184,7 +187,7 @@
 	margin-bottom: 35px;
 }
 
-.favorite_boxes .weather_box .city_title h2 {
+.favorite_boxes .weather_box .city_title h3 {
 	margin: 0px;
 	font-size: 40px;
 }
@@ -196,6 +199,12 @@
 }
 
 @media screen and (max-width: 1120px), (orientation: portrait) {
+
+	.local_weather_header {
+		padding: 0;
+		padding-top: 5.2vw;
+		max-width: 83.3vw;
+	}
 
 	.main_part {
 		padding: 0;
@@ -229,12 +238,12 @@
 		font-size: 24.3vw;
 	}
 
-	.local_weather_header h1, .favorite_title h1 {
+	.local_weather_header h1, .favorite_title h2 {
 		font-size: 8.7vw;
 		margin-bottom: 5.2vw;
 	}
 
-	.local_box .weather_box .city_title h2 {
+	.local_box .weather_box .city_title h3 {
 		font-size: 8.7vw;
 	}
 	
@@ -293,7 +302,7 @@
 		margin-bottom: 6.1vw;
 	}
 	
-	.favorite_boxes .weather_box .city_title h2 {
+	.favorite_boxes .weather_box .city_title h3 {
 		margin: 0px;
 		font-size: 6.9vw;
 	}
