@@ -41,7 +41,7 @@
 	margin: 0 auto;
 }
 
-.local_weather_header h1, .favorite_title h2 {
+.local_weather_header h1, .favorite_title h2, .city_choice_content p {
 	align-self: flex-start;
 	white-space: nowrap;
 	font-size: 50px;
@@ -84,7 +84,7 @@
 }
 
 .local_box .weather_box .city_title .weather_indicator p {
-	font-size: 140px;
+	font-size: 90px;
 	margin: 0px;
 	color: rgb(127, 127, 127);
 }
@@ -93,6 +93,32 @@
 	display: flex;
 	flex-direction: column;
 	align-self: flex-end;
+}
+
+.local_box .load_screen {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.local_box .load_screen p {
+	font-size: 75px;
+	font-family: "Times New Roman", Times, serif;
+	font-weight: normal;
+	text-align: center;
+	margin: 0;
+	margin-bottom: 30px;
+}
+
+.local_box .load_screen .reload_button {
+	width: 265px;
+	height: 54px;
+	border-radius: 5px;
+	background-color: rgb(201, 210, 215);
+	color: rgb(112, 128, 128);
+	border: none;
+	font-size: 18px;
+	font-family: "Times New Roman", Times, serif;
 }
 
 .weather_box .weather_description p {
@@ -131,7 +157,7 @@
 	flex-grow: 5;
 }
 
-.favorite_title input {
+.favorite_title input, .city_choice_content input {
 	width: 335px;
 	height: 50px;
 	padding-left: 15px;
@@ -198,6 +224,70 @@
 	color: rgb(127, 127, 127);
 }
 
+.favorite_boxes .load_screen {
+	width: 490px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.favorite_boxes .load_screen p {
+	white-space: nowrap;
+	font-size: 24px;
+	font-family: "Times New Roman", Times, serif;
+	font-weight: normal;
+	margin: 0;
+	margin-bottom: 30px;
+}
+
+.favorite_boxes .weather_box .load_screen .reload_button {
+	width: 265px;
+	height: 54px;
+	border-radius: 5px;
+	background-color: rgb(201, 210, 215);
+	color: rgb(112, 128, 128);
+	border: none;
+	font-size: 18px;
+	font-family: "Times New Roman", Times, serif;
+}
+
+.hidden {
+	display: none !important;
+}
+
+.city_choice_list {
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.4);
+}
+
+.city_choice_list .city_choice_content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: rgb(255, 255, 255);
+	margin: 15% auto;
+	padding: 10px;
+	width: 500px;
+}
+
+.city_choice_content .city_ok_button {
+	width: 265px;
+	height: 54px;
+	margin-top: 30px;
+	border-radius: 5px;
+	background-color: rgb(201, 210, 215);
+	color: rgb(112, 128, 128);
+	border: none;
+	font-size: 18px;
+	font-family: "Times New Roman", Times, serif;
+}
+
 @media screen and (max-width: 1120px), (orientation: portrait) {
 
 	.local_weather_header {
@@ -227,6 +317,20 @@
 		margin-right: 19.1vw;
 	}
 	
+	.local_box .load_screen p {
+		font-size: 8.7vw;
+	}
+	
+	.local_box .load_screen .reload_button {
+		font-size: 0px;
+		width: 12.2vw;
+		height: 9.4vw;
+		background-image: url("reload_icon.png");
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 9.4vw 9.4vw;
+	}
+	
 	.weather_box .weather_description p {
 		width: 83.3vw;
 		height: 8.3vw;
@@ -235,7 +339,7 @@
 	}
 
 	.local_box .weather_box .city_title .weather_indicator p {
-		font-size: 24.3vw;
+		font-size: 15vw;
 	}
 
 	.local_weather_header h1, .favorite_title h2 {
@@ -323,6 +427,26 @@
 	.add_button {
 		font-size: 5.2vw;
 		line-height: 6.9vw;
+	}
+
+	.favorite_boxes .load_screen {
+		width: 83.3vw;
+	}
+	
+	.favorite_boxes .load_screen p {
+		white-space: nowrap;
+		font-size: 4vw;
+		margin-bottom: 5.2vw;
+	}
+	
+	.favorite_boxes .weather_box .load_screen .reload_button {
+		font-size: 0px;
+		width: 12.2vw;
+		height: 9.4vw;
+		background-image: url("reload_icon.png");
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 9.4vw 9.4vw;
 	}
 	
 }

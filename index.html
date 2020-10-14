@@ -1,28 +1,46 @@
 <!DOCTYPE html>
 
+<html class="general_style">
+
 <head>
 	<title>Погода в Санкт-Петербурге и еще 42 городах</title>
 	<link rel="stylesheet" href="styles.css">
+	<script src="weather_retrieve.js"></script>
 </head>
 
-<html class="general_style">
+<body onload="loadWeather();">
 
 <header class="local_weather_header">
 	<h1>
 		Погода здесь
 	</h1>
-	<button class="reload_button">
+	<button class="reload_button" onclick="reloadGeoloc();">
 		Обновить геолокацию
 	</button>
 </header>
 
 <main class="main_part">
+	<div class="city_choice_list hidden">
+		<div class="city_choice_content">
+			<p>Выберите город</p>
+			<input id="localcity" value="Saint Petersburg">
+			<button class="city_ok_button" onclick="chooseLocalCity();">
+				Выбрать
+			</button>
+		</div>
+	</div>
 	<article class="local_box">
-		<section class="weather_box">
+		<section class="load_screen">
+			<p>Подождите, данные загружаются</p>
+			<button class="reload_button" onclick="reloadLocalWeather();">
+				Обновить температуру
+			</button>
+		</section>
+		<section class="weather_box hidden">
 			<div class="city_title">
 				<h3>Saint Petersburg</h3>
 				<div class="weather_indicator">
-					<image src="weather_icon.png" class="weather_icon" alt="Иконка погоды"></image>
+					<image class="weather_icon" alt="Иконка погоды"></image>
 					<p>8°C</p>
 				</div>
 			</div>
@@ -53,190 +71,12 @@
 	<section class="favorite_title">
 		<h2>Избранное</h2>
 		<input id="newcity" placeholder="Добавить новый город">
-		<button class="add_button">+</p>
+		<button class="add_button" onClick = "addFavCity();">+</button>
 	</section>
 	<article class="favorite_boxes">
-		<section class="weather_box">
-			<div class="city_title">
-				<h3>Moscow</h3>
-				<p class="temperature">5°C</p>
-				<image src="weather_icon.png" class="weather_icon" alt="Иконка погоды"></image>
-				<button class="delete_button">✕</p>
-			</div>
-			<div class="weather_description">
-				<p>
-					<span>Ветер</span>
-					<span>Moderate breeze, 6.0 m/s, North-northwest</span>
-				</p>
-				<p>
-					<span>Облачность</span>
-					<span>Broken clouds</span>
-				</p>
-				<p>
-					<span>Давление</span>
-					<span>1013 hpa</span>
-				</p>
-				<p>
-					<span>Влажность</span>
-					<span>52 %</span>
-				</p>
-				<p>
-					<span>Координаты</span>
-					<span>[59.88, 30.42]</span>
-				</p>
-			</div>
-		</section>
-		<section class="weather_box">
-			<div class="city_title">
-				<h3>Helsinki</h3>
-				<p class="temperature">3°C</p>
-				<image src="weather_icon.png" class="weather_icon" alt="Иконка погоды"></image>
-				<button class="delete_button">✕</p>
-			</div>
-			<div class="weather_description">
-				<p>
-					<span>Ветер</span>
-					<span>Moderate breeze, 6.0 m/s, North-northwest</span>
-				</p>
-				<p>
-					<span>Облачность</span>
-					<span>Broken clouds</span>
-				</p>
-				<p>
-					<span>Давление</span>
-					<span>1013 hpa</span>
-				</p>
-				<p>
-					<span>Влажность</span>
-					<span>52 %</span>
-				</p>
-				<p>
-					<span>Координаты</span>
-					<span>[59.88, 30.42]</span>
-				</p>
-			</div>
-		</section>
-		<section class="weather_box">
-			<div class="city_title">
-				<h3>Moscow</h3>
-				<p class="temperature">5°C</p>
-				<image src="weather_icon.png" class="weather_icon" alt="Иконка погоды"></image>
-				<button class="delete_button">✕</p>
-			</div>
-			<div class="weather_description">
-				<p>
-					<span>Ветер</span>
-					<span>Moderate breeze, 6.0 m/s, North-northwest</span>
-				</p>
-				<p>
-					<span>Облачность</span>
-					<span>Broken clouds</span>
-				</p>
-				<p>
-					<span>Давление</span>
-					<span>1013 hpa</span>
-				</p>
-				<p>
-					<span>Влажность</span>
-					<span>52 %</span>
-				</p>
-				<p>
-					<span>Координаты</span>
-					<span>[59.88, 30.42]</span>
-				</p>
-			</div>
-		</section>
-		<section class="weather_box">
-			<div class="city_title">
-				<h3>Helsinki</h3>
-				<p class="temperature">3°C</p>
-				<image src="weather_icon.png" class="weather_icon" alt="Иконка погоды"></image>
-				<button class="delete_button">✕</p>
-			</div>
-			<div class="weather_description">
-				<p>
-					<span>Ветер</span>
-					<span>Moderate breeze, 6.0 m/s, North-northwest</span>
-				</p>
-				<p>
-					<span>Облачность</span>
-					<span>Broken clouds</span>
-				</p>
-				<p>
-					<span>Давление</span>
-					<span>1013 hpa</span>
-				</p>
-				<p>
-					<span>Влажность</span>
-					<span>52 %</span>
-				</p>
-				<p>
-					<span>Координаты</span>
-					<span>[59.88, 30.42]</span>
-				</p>
-			</div>
-		</section>
-		<section class="weather_box">
-			<div class="city_title">
-				<h3>Moscow</h3>
-				<p class="temperature">5°C</p>
-				<image src="weather_icon.png" class="weather_icon" alt="Иконка погоды"></image>
-				<button class="delete_button">✕</p>
-			</div>
-			<div class="weather_description">
-				<p>
-					<span>Ветер</span>
-					<span>Moderate breeze, 6.0 m/s, North-northwest</span>
-				</p>
-				<p>
-					<span>Облачность</span>
-					<span>Broken clouds</span>
-				</p>
-				<p>
-					<span>Давление</span>
-					<span>1013 hpa</span>
-				</p>
-				<p>
-					<span>Влажность</span>
-					<span>52 %</span>
-				</p>
-				<p>
-					<span>Координаты</span>
-					<span>[59.88, 30.42]</span>
-				</p>
-			</div>
-		</section>
-		<section class="weather_box">
-			<div class="city_title">
-				<h3>Helsinki</h3>
-				<p class="temperature">3°C</p>
-				<image src="weather_icon.png" class="weather_icon" alt="Иконка погоды"></image>
-				<button class="delete_button">✕</p>
-			</div>
-			<div class="weather_description">
-				<p>
-					<span>Ветер</span>
-					<span>Moderate breeze, 6.0 m/s, North-northwest</span>
-				</p>
-				<p>
-					<span>Облачность</span>
-					<span>Broken clouds</span>
-				</p>
-				<p>
-					<span>Давление</span>
-					<span>1013 hpa</span>
-				</p>
-				<p>
-					<span>Влажность</span>
-					<span>52 %</span>
-				</p>
-				<p>
-					<span>Координаты</span>
-					<span>[59.88, 30.42]</span>
-				</p>
-			</div>
-		</section>
 	</article>
 </main>
+
+</body>
 
 </html>
