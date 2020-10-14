@@ -342,7 +342,7 @@
 		font-size: 15vw;
 	}
 
-	.local_weather_header h1, .favorite_title h2 {
+	.local_weather_header h1, .favorite_title h2, .city_choice_content p {
 		font-size: 8.7vw;
 		margin-bottom: 5.2vw;
 	}
@@ -374,7 +374,7 @@
 		margin-bottom: 5.2vw;
 	}
 
-	.favorite_title input {
+	.favorite_title input, .city_choice_content input {
 		width: 60vw;
 		height: 8.7vw;
 		padding-left: 2.6vw;
@@ -447,6 +447,17 @@
 		background-repeat: no-repeat;
 		background-position: center;
 		background-size: 9.4vw 9.4vw;
+	}
+	
+	.city_choice_list .city_choice_content {
+		width: 80vw;
+		padding: 1.8vw;
+	}
+	
+	.city_choice_content .city_ok_button {
+		width: 24.4vw;
+		height: 9.4vw;
+		font-size: 3.1vw;
 	}
 	
 }

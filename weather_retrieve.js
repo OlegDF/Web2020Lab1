@@ -27,7 +27,7 @@ function errorHandler(err) {
 }
 
 function getCity(position) {
-	fetch("http://api.geonames.org/findNearbyPlaceName?cities=cities5000&lat=" + position.coords.latitude + "&lng=" + position.coords.longitude + "&username=habsburgchin").then(response => response.text())
+	fetch("https://cors-anywhere.herokuapp.com/http://api.geonames.org/findNearbyPlaceName?cities=cities5000&lat=" + position.coords.latitude + "&lng=" + position.coords.longitude + "&username=habsburgchin").then(response => response.text())
         .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
         .then(data => {
 				localCity = data.getElementsByTagName("geonames")[0].getElementsByTagName("geoname")[0].getElementsByTagName("name")[0].firstChild.nodeValue;
@@ -45,7 +45,7 @@ function loadLocalBox() {
 }
 
 function getWeather(cityName, _callback) {
-	fetch("http://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=05084c9b7c23be334330469ae0d59085").then(response => response.json()).then(json => {
+	fetch("https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=05084c9b7c23be334330469ae0d59085").then(response => response.json()).then(json => {
 			console.log(json);
 			_callback(cityName, json);
 		}
