@@ -48,7 +48,7 @@ function loadLocalBox() {
 }
 
 function getWeather(cityName, _callback) {
-	fetch("https://cors-anywhere.herokuapp.com/http://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=05084c9b7c23be334330469ae0d59085").then(response => response.json()).then(json => {
+	fetch("https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=05084c9b7c23be334330469ae0d59085").then(response => response.json()).then(json => {
 			console.log(json);
 			_callback(cityName, json);
 		}
