@@ -16,6 +16,7 @@ function loadWeather() {
 }
 
 function getLocation() {
+	localBox = document.getElementsByClassName("local_box")[0];
 	var geolocation = navigator.geolocation;
 	geolocFinished = false;
 	geolocation.getCurrentPosition(getCity, errorHandler, {maximumAge: 75000});
@@ -28,12 +29,14 @@ function errorHandler(err) {
 
 function getCity(position) {
 	fetch("https://cors-anywhere.herokuapp.com/http://api.geonames.org/findNearbyPlaceName?cities=cities5000&lat=" + position.coords.latitude + "&lng=" + position.coords.longitude + "&username=habsburgchin").then(response => response.text())
-        .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
-        .then(data => {
+		.then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
+		.then(data => {
 				localCity = data.getElementsByTagName("geonames")[0].getElementsByTagName("geoname")[0].getElementsByTagName("name")[0].firstChild.nodeValue;
 				geolocFinished = true;
 			}
-		);
+		).catch(function(error) {
+			localBox.getElementsByClassName("load_screen")[0].children[0].textContent = "Ошибка соединения.";
+		});
 }
 
 function loadLocalBox() {
@@ -45,11 +48,19 @@ function loadLocalBox() {
 }
 
 function getWeather(cityName, _callback) {
-	fetch("https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=05084c9b7c23be334330469ae0d59085").then(response => response.json()).then(json => {
+	fetch("https://cors-anywhere.herokuapp.com/http://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=05084c9b7c23be334330469ae0d59085").then(response => response.json()).then(json => {
 			console.log(json);
 			_callback(cityName, json);
 		}
-	);
+	).catch(function(error) {
+		if(cityName == localCity) {
+			localBox.getElementsByClassName("load_screen")[0].children[0].textContent = "Ошибка соединения.";
+		}
+		selectedWeatherBox = findCityBox(cityName);
+		if(selectedWeatherBox != null) {
+			selectedWeatherBox.getElementsByClassName("load_screen")[0].children[0].textContent = "Ошибка соединения.";
+		}
+	});
 }
 
 function printLocalWeather(localCity, weatherJson) {
@@ -117,58 +128,21 @@ function initializeFavoriteCityBoxes() {
 
 function createFavoriteCityBox(cityName) {
 	favoriteBoxes = document.getElementsByClassName("favorite_boxes")[0];
-	newBox = document.createElement("section");
-	newBox.classList.add("weather_box");
+	
+	boxTemplate = document.getElementById("favweatherbox");
+	newBox = boxTemplate.content.firstElementChild.cloneNode(true);
 	favoriteBoxes.appendChild(newBox);
 	
-	cityTitle = document.createElement("div");
-	cityTitle.classList.add("city_title");
-	newBox.appendChild(cityTitle);
-	cityTitleH3 = document.createElement("h3");
-	cityTitleH3.textContent = cityName;
-	cityTitle.appendChild(cityTitleH3);
-	cityTitleTemp = document.createElement("p");
-	cityTitleTemp.classList.add("temperature");
-	cityTitle.appendChild(cityTitleTemp);
-	weatherIcon = document.createElement("img");
-	weatherIcon.classList.add("weather_icon", "hidden");
-	weatherIcon.setAttribute("alt", "Иконка погоды");
-	cityTitle.appendChild(weatherIcon);
-	deleteButton = document.createElement("button");
-	deleteButton.classList.add("delete_button");
-	deleteButton.textContent = "✕";
+	newBox.getElementsByClassName("city_title")[0].children[0].textContent = cityName;
+	
+	deleteButton = newBox.getElementsByClassName("city_title")[0].getElementsByClassName("delete_button")[0];
 	deleteButton.onclick = function() {
 		deleteFavCity(cityName);
 	}
-	cityTitle.appendChild(deleteButton);
 	
-	loadScreen = document.createElement("div");
-	loadScreen.classList.add("load_screen");
-	newBox.appendChild(loadScreen);
-	loadScreenText = document.createElement("p");
-	loadScreenText.textContent = "Подождите, данные загружаются";
-	loadScreen.appendChild(loadScreenText);
-	reloadButton = document.createElement("button");
-	reloadButton.classList.add("reload_button");
-	reloadButton.textContent = "Обновить температуру";
+	reloadButton = newBox.getElementsByClassName("load_screen")[0].getElementsByClassName("reload_button")[0];
 	reloadButton.onclick = function() {
 		reloadFavWeather(cityName);
-	}
-	loadScreen.appendChild(reloadButton);
-	
-	weatherDescription = document.createElement("div");
-	weatherDescription.classList.add("weather_description", "hidden");
-	newBox.appendChild(weatherDescription);
-	let weatherTitles = ["Ветер", "Облачность", "Давление", "Влажность", "Координаты"];
-	for(var i = 0; i < 5; i++) {
-		weatherItem = document.createElement("p");
-		itemName = document.createElement("span");
-		itemName.textContent = weatherTitles[i];
-		weatherItem.appendChild(itemName);
-		itemDesc = document.createElement("span");
-		itemDesc.textContent = "?";
-		weatherItem.appendChild(itemDesc);
-		weatherDescription.appendChild(weatherItem);
 	}
 }
 
@@ -200,7 +174,7 @@ function printFavoriteWeather(cityName, weatherJson) {
 
 function findCityBox(cityName) {
 	favoriteBoxes = document.getElementsByClassName("favorite_boxes")[0].getElementsByClassName("weather_box");
-	var selectedWeatherBox;
+	var selectedWeatherBox = null;
 	for(var i = 0; i < favoriteBoxes.length; i++) {
 		if(favoriteBoxes[i].getElementsByClassName("city_title")[0].children[0].textContent == cityName) {
 			selectedWeatherBox = favoriteBoxes[i];
@@ -234,10 +208,19 @@ function loadFavCities() {
 function addFavCity() {
 	newCityName = document.getElementById("newcity").value;
 	document.getElementById("newcity").value = "";
+	if(favCityNames.includes(newCityName)) {
+		return;
+	}
 	favCityNames.push(newCityName);
 	localStorage.setItem("favCities", JSON.stringify(favCityNames));
 	createFavoriteCityBox(newCityName);
 	getWeather(newCityName, function(cityName, json) {printFavoriteWeather(cityName, json)});
+}
+
+function addFavCityOnEnter() {
+	if(event.key == 'Enter') {
+		addFavCity()
+	}
 }
 
 function deleteFavCity(cityName) {
@@ -262,4 +245,10 @@ function chooseLocalCity() {
 	hideLocalWeather();
 	loadLocalBox();
 	document.getElementsByClassName("city_choice_list")[0].classList.add("hidden");
+}
+
+function chooseLocalCityOnEnter() {
+	if(event.key == 'Enter') {
+		chooseLocalCity()
+	}
 }
