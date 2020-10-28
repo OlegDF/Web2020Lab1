@@ -157,7 +157,7 @@
 	flex-grow: 5;
 }
 
-.favorite_title input, .city_choice_content input {
+.favorite_title .input_fav_city, .city_choice_content input {
 	width: 335px;
 	height: 50px;
 	padding-left: 15px;

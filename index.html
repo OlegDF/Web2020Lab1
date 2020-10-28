@@ -23,10 +23,10 @@
 	<div class="city_choice_list hidden">
 		<div class="city_choice_content">
 			<p>Выберите город</p>
-			<input id="localcity" value="Saint Petersburg" onkeydown="chooseLocalCityOnEnter();">
-			<button class="city_ok_button" onclick="chooseLocalCity();">
-				Выбрать
-			</button>
+			<form id="local_city_form">
+				<input type="text" class="input_fav_city" name="cityname" id="localcity" value="Saint Petersburg">
+				<input type="submit" class="city_ok_button" value="Выбрать">
+			</form>
 		</div>
 	</div>
 	<article class="local_box">
@@ -70,8 +70,10 @@
 	</article>
 	<section class="favorite_title">
 		<h2>Избранное</h2>
-		<input id="newcity" placeholder="Добавить новый город" onkeydown="addFavCityOnEnter();">
-		<button class="add_button" onClick = "addFavCity();">+</button>
+		<form id="fav_city_form">
+			<input type="text" class="input_fav_city" name="cityname" id="newcity" placeholder="Добавить новый город">
+			<input type="submit" class="add_button" value="+">
+		</form>
 	</section>
 	<article class="favorite_boxes">
 	</article>
@@ -79,9 +81,9 @@
 	<template id="favweatherbox">
 		<section class="weather_box">
 			<div class="city_title">
-				<h3>Moscow</h3>
-				<p class="temperature">5°C</p>
-				<image class="weather_icon" alt="Иконка погоды"></image>
+				<h3></h3>
+				<p class="temperature"></p>
+				<image class="weather_icon hidden" alt="Иконка погоды"></image>
 				<button class="delete_button">✕</p>
 			</div>
 			<section class="load_screen">
@@ -93,23 +95,23 @@
 			<div class="weather_description hidden">
 				<p>
 					<span>Ветер</span>
-					<span>?, ? m/s, ?</span>
+					<span></span>
 				</p>
 				<p>
 					<span>Облачность</span>
-					<span>?</span>
+					<span></span>
 				</p>
 				<p>
 					<span>Давление</span>
-					<span>? hpa</span>
+					<span></span>
 				</p>
 				<p>
 					<span>Влажность</span>
-					<span>? %</span>
+					<span></span>
 				</p>
 				<p>
 					<span>Координаты</span>
-					<span>[?, ?]</span>
+					<span></span>
 				</p>
 			</div>
 		</section>
