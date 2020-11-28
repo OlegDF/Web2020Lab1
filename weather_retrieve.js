@@ -90,7 +90,7 @@ function printLocalWeather(localCity, weatherJson) {
 	localBoxWeatherDescription.children[1].children[1].textContent = getCategory(cloudCategories, weatherJson["clouds"]["all"]);
 	localBoxWeatherDescription.children[2].children[1].textContent = main["pressure"] + " hpa";
 	localBoxWeatherDescription.children[3].children[1].textContent = main["humidity"] + " %";
-	localBoxWeatherDescription.children[4].children[1].textContent = "[" + weatherJson["coord"]["lon"] + ", " + weatherJson["coord"]["lat"] + "]";
+	localBoxWeatherDescription.children[4].children[1].textContent = "[" + weatherJson["coord"]["lat"] + ", " + weatherJson["coord"]["lon"] + "]";
 	unhideLocalWeather();
 }
 
@@ -189,7 +189,7 @@ function printFavoriteWeather(cityName, weatherJson) {
 	selectedBoxWeatherDescription.children[1].children[1].textContent = getCategory(cloudCategories, weatherJson["clouds"]["all"]);
 	selectedBoxWeatherDescription.children[2].children[1].textContent = main["pressure"] + " hpa";
 	selectedBoxWeatherDescription.children[3].children[1].textContent = main["humidity"] + " %";
-	selectedBoxWeatherDescription.children[4].children[1].textContent = "[" + weatherJson["coord"]["lon"] + ", " + weatherJson["coord"]["lat"] + "]";
+	selectedBoxWeatherDescription.children[4].children[1].textContent = "[" + weatherJson["coord"]["lat"] + ", " + weatherJson["coord"]["lon"] + "]";
 	unhideFavoriteWeather(selectedWeatherBox);
 }
 
