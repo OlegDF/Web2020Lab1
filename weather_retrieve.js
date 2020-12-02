@@ -2,12 +2,19 @@ let degWind = [[11.25, 'North'], [33.75, 'North-northeast'], [56.25, 'Northeast'
 let speedWind = [[0.2, 'Calm'], [1.5, 'Light air'], [3.3, 'Light breeze'], [5.4, 'Gentle wind'], [7.9, 'Moderate wind'], [10.7, 'Fresh breeze'], [13.8, 'Strong wind'], [17.1, 'High wind']];
 let cloudCategories = [[25, 'Clear Skies'], [50, 'Scattered Clouds'], [76, 'Broken Clouds'], [100, 'Overcast']]
 
-var favCityNames;
+var favCityNames = [];
 var localCity = 'Saint Petersburg'
 var geolocFinished = false;
+var geolocRefused = false;
 var favCitiesRetrieved = false;
 var favCityBoxesInitialized = false;
 var localBox;
+
+exports.favCityNames = favCityNames;
+exports.localCity = localCity;
+exports.geolocFinished = geolocFinished;
+exports.favCitiesRetrieved = favCitiesRetrieved;
+exports.favCityBoxesInitialized = favCityBoxesInitialized;
 
 function loadWeather() {
 	loadFavCities();
@@ -20,18 +27,30 @@ function loadWeather() {
 }
 
 function getLocation() {
+	if(!geolocRefused) {
+		geolocFinished = false;
+	}
 	localBox = document.getElementsByClassName("local_box")[0];
 	var geolocation = navigator.geolocation;
-	geolocFinished = false;
 	geolocation.getCurrentPosition(getCity, errorHandler, {maximumAge: 75000});
 }
 
+exports.getLocation = function() {
+	getLocation();
+	window.setTimeout(() => {
+		exports.geolocFinished = geolocFinished;
+		exports.localCity = localCity;
+	}, 200);
+}
+
 function errorHandler(err) {
-	geolocFinished = true;
 	document.getElementsByClassName("city_choice_list")[0].classList.remove("hidden");
+	geolocRefused = true;
+	geolocFinished = true;
 }
 
 function getCity(position) {
+	geolocRefused = false;
 	fetch("https://localhost:3000/weather/coordinates?lat=" + position.coords.latitude + "&lng=" + position.coords.longitude).then(response => response.text())
 		.then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
 		.then(data => {
@@ -56,9 +75,13 @@ function loadLocalBox() {
 	}
 }
 
+exports.loadLocalBox = function() {
+	loadLocalBox();
+}
+
 function getWeather(cityName, _callback) {
 	fetch("https://localhost:3000/weather/city?q=" + cityName).then(response => response.text()).then(text => {
-			console.log(text);
+			//console.log(text);
 			_callback(cityName, JSON.parse(text));
 		}
 	).catch(function(error) {
@@ -83,7 +106,7 @@ function printLocalWeather(localCity, weatherJson) {
 	localBoxWeatherBox = document.getElementsByClassName("local_box")[0].getElementsByClassName("weather_box")[0];
 	
 	localBoxWeatherBox.getElementsByClassName("city_title")[0].getElementsByClassName("weather_indicator")[0].children[1].textContent = (Math.round((main["temp"] - 273.15) * 10) / 10) + "°C";
-	localBoxWeatherBox.getElementsByClassName("city_title")[0].getElementsByClassName("weather_indicator")[0].children[0].setAttribute("src", "http://openweathermap.org/img/wn/" + weatherJson["weather"][0]["icon"] + "@2x.png");
+	localBoxWeatherBox.getElementsByClassName("city_title")[0].getElementsByClassName("weather_indicator")[0].children[0].setAttribute("src", "https://openweathermap.org/img/wn/" + weatherJson["weather"][0]["icon"] + "@2x.png");
 	
 	localBoxWeatherDescription = localBoxWeatherBox.getElementsByClassName("weather_description")[0];
 	localBoxWeatherDescription.children[0].children[1].textContent = getCategory(speedWind, wind["speed"]) + ", " + wind["speed"] + " m/s, " + getCategory(degWind, wind["deg"]);
@@ -141,6 +164,14 @@ function initializeFavoriteCityBoxes() {
 	}
 }
 
+exports.initializeFavoriteCityBoxes = function() {
+	initializeFavoriteCityBoxes();
+	window.setTimeout(() => {
+		exports.favCityBoxesInitialized = favCityBoxesInitialized;
+	}, 200);
+	
+}
+
 function createFavoriteCityBox(cityName) {
 	favoriteBoxes = document.getElementsByClassName("favorite_boxes")[0];
 	
@@ -169,6 +200,11 @@ function printFavoriteBoxes() {
 			getWeather(favCityNames[i], function(cityName, json) {printFavoriteWeather(cityName, json)});
 		}
 	}
+}
+
+exports.printFavoriteBoxes = function() {
+	printFavoriteBoxes();
+	
 }
 
 function printFavoriteWeather(cityName, weatherJson) {
@@ -221,12 +257,23 @@ function hideFavoriteWeather(selectedWeatherBox) {
 function loadFavCities() {
 	fetch("https://localhost:3000/weather/favorites").then(response => response.text()).then(text => {
 			favCityNames = JSON.parse(text);
+			if(!Array.isArray(favCityNames)) {
+				favCityNames = [];
+			}
 			favCitiesRetrieved = true;
 		}
 	).catch(function(error) {
 		console.log(error);
 		favCitiesRetrieved = true;
 	});
+}
+
+exports.loadFavCities = function() {
+	loadFavCities();
+	window.setTimeout(() => {
+		exports.favCityNames = favCityNames;
+		exports.favCitiesRetrieved = favCitiesRetrieved;
+	}, 200);
 }
 
 function configureFavCityForm() {
@@ -236,6 +283,7 @@ function configureFavCityForm() {
 		addFavCity();
 	});
 }
+
 
 function addFavCity() {
 	newCityName = document.getElementById("newcity").value;
@@ -259,7 +307,14 @@ function addFavCity() {
 	}).catch(function(error) {
 		document.getElementById("newcity").placeholder = "Ошибка соединения с базой данных.";
 	});
+}
 
+exports.addFavCity = function(newCityName) {
+	document.getElementById("newcity").value = newCityName;
+	addFavCity();
+	window.setTimeout(() => {
+		exports.favCityNames = favCityNames;
+	}, 200);
 }
 
 function deleteFavCity(cityName) {
@@ -283,6 +338,13 @@ function deleteFavCity(cityName) {
 	});
 }
 
+exports.deleteFavCity = function(cityName) {
+	deleteFavCity(cityName);
+	window.setTimeout(() => {
+		exports.favCityNames = favCityNames;
+	}, 200);
+}
+
 function reloadFavWeather(cityName) {
 	hideFavoriteWeather(findCityBox(cityName));
 	getWeather(cityName, function(cityName, json) {printFavoriteWeather(cityName, json)});
@@ -302,4 +364,14 @@ function chooseLocalCity() {
 	hideLocalWeather();
 	loadLocalBox();
 	document.getElementsByClassName("city_choice_list")[0].classList.add("hidden");
+}
+
+exports.setLocalCity = function(newCity) {
+	localCity = newCity;
+	geolocFinished = true;
+}
+
+exports.setFavCities = function(newCities) {
+	favCityNames = newCities;
+	favCitiesRetrieved = true;
 }
