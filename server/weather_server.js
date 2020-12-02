@@ -1,10 +1,10 @@
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
-const fetch = require("node-fetch");
+require("isomorphic-fetch");
 const { Client } = require('pg');
 
-const pg_client = new Client({
+var pg_client = new Client({
     user: 'postgres',
     host: 'localhost',
     database: 'weatherdb',
@@ -13,14 +13,22 @@ const pg_client = new Client({
 });
 pg_client.connect();
 
+exports.replacePgClient = function(newPg) {
+	pg_client = newPg;
+}
+
 const hostname = '127.0.0.1';
 const port = 3000;
 
 initializeDb();
 
+var keyLoc = '';
+
+searchForKeyLoc();
+
 const options = {
-	key: fs.readFileSync('key.pem'),
-	cert: fs.readFileSync('cert.pem'),
+	key: fs.readFileSync(keyLoc + 'key.pem'),
+	cert: fs.readFileSync(keyLoc + 'cert.pem'),
 };
 
 const server = https.createServer(options, (req, res) => {
@@ -35,6 +43,7 @@ const server = https.createServer(options, (req, res) => {
 	const queryUrl = '?' + req.url.split('?')[1];
 	const urlSearchParams = new URLSearchParams(queryUrl);
 	let cityName = '';
+	console.log(req.method);
 	if(req.method === 'POST' || req.method === 'DELETE') {
 		req.on('data', function (data) {
             cityName = data;
@@ -68,6 +77,7 @@ const server = https.createServer(options, (req, res) => {
 	}
 }).listen(port, hostname, () => {
 	console.log(`Server running at https://${hostname}:${port}/`);
+	exports.server = server;
 });
 
 function send404(res) {
@@ -120,16 +130,16 @@ function addFavCity(cityName, res) {
 		INSERT INTO favcities VALUES
 		('` + cityName + `');
 		`;
-	pg_client.query(insert_query, (err,result) => {
-		if (err) {
-			res.statusCode = 500;
-			console.error(err);
-			res.end(err);
-			return;
-		}
+	pg_client.query(insert_query).then(result => {
 		console.log("City of " + cityName + " inserted");
+		console.log(result);
 		res.statusCode = 200;
 		res.end();
+		return;
+	}).catch(err => {
+		res.statusCode = 500;
+		console.error(err);
+		res.end(err);
 		return;
 	});
 }
@@ -139,16 +149,15 @@ function deleteFavCity(cityName, res) {
 		DELETE FROM favcities
 		WHERE name = '` + cityName + `';
 		`;
-	pg_client.query(delete_query, (err,result) => {
-		if (err) {
-			res.statusCode = 500;
-			console.error(err);
-			res.end(err);
-			return;
-		}
+	pg_client.query(delete_query).then(result => {
 		console.log("City of " + cityName + " deleted");
 		res.statusCode = 200;
 		res.end();
+		return;
+	}).catch(err => {
+		res.statusCode = 500;
+		console.error(err);
+		res.end(err);
 		return;
 	});
 }
@@ -157,13 +166,7 @@ function sendFavCities(res) {
 	const select_query = `
 		SELECT * FROM favcities;
 		`;
-	pg_client.query(select_query, (err,result) => {
-		if (err) {
-			res.statusCode = 500;
-			console.error(err.message);
-			res.end(err.message);
-			return;
-		}
+	pg_client.query(select_query).then(result => {
 		console.log("Cities retrieved");
 		let favCities = [];
 		for(let row of result.rows) {
@@ -172,5 +175,19 @@ function sendFavCities(res) {
 		res.statusCode = 200;
 		res.end(JSON.stringify(favCities));
 		return;
+	}).catch(err => {
+		console.log(err);
+		res.statusCode = 500;
+		console.error(err);
+		res.end(err);
+		return;
 	});
+}
+
+function searchForKeyLoc() {
+	var loc = process.cwd();
+	var dir = loc.substring(loc.lastIndexOf('\\'), loc.length);
+	if(dir != "\\server") {
+		keyLoc = "server/"
+	}
 }
