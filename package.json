@@ -1,0 +1,30 @@
+{
+  "name": "lab4_new",
+  "version": "1.0.0",
+  "description": "weather package",
+  "main": "./server/weather_server",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha --require ./test/setup.js"
+  },
+  "author": "Oleg Filimonov",
+  "license": "ISC",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "es6-promise": "^4.2.8",
+    "fake-fetch": "^2.3.0",
+    "fetch": "^1.1.0",
+    "fetch-mock": "^9.11.0",
+    "isomorphic-fetch": "^3.0.0",
+    "jsdom": "^16.4.0",
+    "jsdom-global": "^3.0.2",
+    "mocha": "^8.2.1",
+    "mocha-jsdom": "^2.0.0",
+    "mock-geolocation": "^1.0.11",
+    "sinon": "^9.2.1",
+    "supertest": "^6.0.1",
+    "whatwg-fetch": "^3.5.0"
+  }
+}
