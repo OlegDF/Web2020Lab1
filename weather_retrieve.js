@@ -1,3 +1,5 @@
+const sinon = require("sinon");
+
 let degWind = [[11.25, 'North'], [33.75, 'North-northeast'], [56.25, 'Northeast'], [78.75, 'East-northeast'], [101.25, 'East'], [123.75, 'East-southeast'], [146.25, 'Southeast'], [168.75, 'South-southeast'], [191.25, 'South'], [213.75, 'South-southwest'], [236.25, 'Southwest'], [258.75, 'West-southwest'], [281.25, 'West'], [303.75, 'West-northwest'], [326.25, 'Northwest'], [348.75, 'North-northwest'], [360, 'North']];
 let speedWind = [[0.2, 'Calm'], [1.5, 'Light air'], [3.3, 'Light breeze'], [5.4, 'Gentle wind'], [7.9, 'Moderate wind'], [10.7, 'Fresh breeze'], [13.8, 'Strong wind'], [17.1, 'High wind']];
 let cloudCategories = [[25, 'Clear Skies'], [50, 'Scattered Clouds'], [76, 'Broken Clouds'], [100, 'Overcast']]
@@ -9,6 +11,8 @@ var geolocRefused = false;
 var favCitiesRetrieved = false;
 var favCityBoxesInitialized = false;
 var localBox;
+
+var geolocCallback;
 
 exports.favCityNames = favCityNames;
 exports.localCity = localCity;
@@ -26,7 +30,8 @@ function loadWeather() {
 	printFavoriteBoxes();
 }
 
-function getLocation() {
+function getLocation(_callback) {
+	geolocCallback = _callback;
 	if(!geolocRefused) {
 		geolocFinished = false;
 	}
@@ -35,18 +40,24 @@ function getLocation() {
 	geolocation.getCurrentPosition(getCity, errorHandler, {maximumAge: 75000});
 }
 
-exports.getLocation = function() {
-	getLocation();
-	window.setTimeout(() => {
+exports.getLocation = function(_callback) {
+	getLocation(function() {
 		exports.geolocFinished = geolocFinished;
 		exports.localCity = localCity;
-	}, 200);
+		console.log(localCity);
+		if(_callback) {
+			_callback();
+		}
+	});
 }
 
 function errorHandler(err) {
 	document.getElementsByClassName("city_choice_list")[0].classList.remove("hidden");
 	geolocRefused = true;
 	geolocFinished = true;
+	if(geolocCallback) {
+		geolocCallback();
+	}
 }
 
 function getCity(position) {
@@ -61,28 +72,48 @@ function getCity(position) {
 					localCity = "Middle of Nowhere"
 				}
 				geolocFinished = true;
+				if(geolocCallback) {
+					geolocCallback();
+				}
 			}
 		).catch(function(error) {
 			localBox.getElementsByClassName("load_screen")[0].children[0].textContent = "Ошибка соединения.";
+			if(geolocCallback) {
+				geolocCallback();
+			}
 		});
 }
 
-function loadLocalBox() {
+function loadLocalBox(_callback) {
 	if(!geolocFinished) {
 		window.setTimeout(loadLocalBox, 100);
 	} else {
-		getWeather(localCity, function(localCity, json) {printLocalWeather(localCity, json)});
+		getWeatherReal(localCity, function(localCity, json, _test_callback) {printLocalWeatherReal(localCity, json, _test_callback)}, _callback);
 	}
 }
 
-exports.loadLocalBox = function() {
-	loadLocalBox();
+exports.loadLocalBox = function(_callback) {
+	loadLocalBox(_callback);
 }
 
-function getWeather(cityName, _callback) {
+function getWeather(cityName, _callback, _test_callback) {
 	fetch("https://localhost:3000/weather/city?q=" + cityName).then(response => response.text()).then(text => {
 			//console.log(text);
-			_callback(cityName, JSON.parse(text));
+			weatherJson = JSON.parse(text);
+			if(!weatherJson.hasOwnProperty("main")) {
+				if(cityName == localCity) {
+					localBox.getElementsByClassName("load_screen")[0].children[0].textContent = "Город не найден.";
+				}
+				selectedWeatherBox = findCityBox(cityName);
+				if(selectedWeatherBox != null) {
+					selectedWeatherBox.getElementsByClassName("load_screen")[0].children[0].textContent = "Город не найден.";
+				}
+				if(_test_callback) {
+					_test_callback();
+				}
+				return;
+			}
+			_callback(cityName, weatherJson, _test_callback);
 		}
 	).catch(function(error) {
 		if(cityName == localCity) {
@@ -93,12 +124,29 @@ function getWeather(cityName, _callback) {
 			selectedWeatherBox.getElementsByClassName("load_screen")[0].children[0].textContent = "Ошибка соединения.";
 		}
 		console.log(error);
+		if(_test_callback) {
+			_test_callback();
+		}
 	});
 }
 
-function printLocalWeather(localCity, weatherJson) {
+var getWeatherReal = getWeather;
+
+exports.getWeatherSpy = function() {
+	getWeatherReal = sinon.spy(getWeather);
+	return getWeatherReal;
+}
+
+exports.getWeather = function(cityName, _callback, _test_callback) {
+	getWeather(cityName, _callback, _test_callback);
+}
+
+function printLocalWeather(localCity, weatherJson, _callback) {
 	if(!weatherJson.hasOwnProperty("main")) {
 		localBox.getElementsByClassName("load_screen")[0].children[0].textContent = "Город не найден.";
+		if(_callback) {
+			_callback();
+		}
 		return;
 	}
 	let main = weatherJson["main"];
@@ -115,6 +163,20 @@ function printLocalWeather(localCity, weatherJson) {
 	localBoxWeatherDescription.children[3].children[1].textContent = main["humidity"] + " %";
 	localBoxWeatherDescription.children[4].children[1].textContent = "[" + weatherJson["coord"]["lat"] + ", " + weatherJson["coord"]["lon"] + "]";
 	unhideLocalWeather();
+	if(_callback) {
+		_callback();
+	}
+}
+
+var printLocalWeatherReal = printLocalWeather;
+
+exports.printLocalWeatherSpy = function() {
+	printLocalWeatherReal = sinon.spy(printLocalWeather);
+	return printLocalWeatherReal;
+}
+
+exports.printLocalWeather = function(weatherJson, _callback) {
+	printLocalWeather(localCity, weatherJson, _callback);
 }
 
 function unhideLocalWeather() {
@@ -164,12 +226,11 @@ function initializeFavoriteCityBoxes() {
 	}
 }
 
-exports.initializeFavoriteCityBoxes = function() {
+exports.initializeFavoriteCityBoxes = function(_callback) {
 	initializeFavoriteCityBoxes();
-	window.setTimeout(() => {
-		exports.favCityBoxesInitialized = favCityBoxesInitialized;
-	}, 200);
-	
+	if(_callback) {
+		_callback();
+	}
 }
 
 function createFavoriteCityBox(cityName) {
@@ -192,25 +253,31 @@ function createFavoriteCityBox(cityName) {
 	}
 }
 
-function printFavoriteBoxes() {
+function printFavoriteBoxes(_callback) {
 	if(!favCityBoxesInitialized) {
 		window.setTimeout(printFavoriteBoxes, 100);
 	} else {
 		for(var i = 0; i < favCityNames.length; i++) {
-			getWeather(favCityNames[i], function(cityName, json) {printFavoriteWeather(cityName, json)});
+			if(i == favCityNames.length - 1) {
+				getWeatherReal(favCityNames[i], function(cityName, json, _test_callback) {printFavoriteWeatherReal(cityName, json, _test_callback)}, _callback);
+			} else {
+				getWeatherReal(favCityNames[i], function(cityName, json) {printFavoriteWeatherReal(cityName, json)});
+			}
 		}
 	}
 }
 
-exports.printFavoriteBoxes = function() {
-	printFavoriteBoxes();
-	
+exports.printFavoriteBoxes = function(_callback) {
+	printFavoriteBoxes(_callback);
 }
 
-function printFavoriteWeather(cityName, weatherJson) {
+function printFavoriteWeather(cityName, weatherJson, _callback) {
 	var selectedWeatherBox = findCityBox(cityName);
 	if(!weatherJson.hasOwnProperty("main")) {
 		selectedWeatherBox.getElementsByClassName("load_screen")[0].children[0].textContent = "Город не найден.";
+		if(_callback) {
+			_callback();
+		}
 		return;
 	}
 	let main = weatherJson["main"];
@@ -227,6 +294,23 @@ function printFavoriteWeather(cityName, weatherJson) {
 	selectedBoxWeatherDescription.children[3].children[1].textContent = main["humidity"] + " %";
 	selectedBoxWeatherDescription.children[4].children[1].textContent = "[" + weatherJson["coord"]["lat"] + ", " + weatherJson["coord"]["lon"] + "]";
 	unhideFavoriteWeather(selectedWeatherBox);
+	if(_callback) {
+		_callback();
+	}
+}
+
+var printFavoriteWeatherReal = printFavoriteWeather;
+
+exports.printFavoriteWeatherSpy = function() {
+	printFavoriteWeatherReal = sinon.spy(printFavoriteWeather);
+	return printFavoriteWeatherReal;
+}
+
+exports.printFavoriteWeather = function(cityName, weatherJson, _callback) {
+	printFavoriteWeather(cityName, weatherJson);
+	if(_callback) {
+		_callback();
+	}
 }
 
 function findCityBox(cityName) {
@@ -254,13 +338,16 @@ function hideFavoriteWeather(selectedWeatherBox) {
 	selectedWeatherBox.getElementsByClassName("city_title")[0].children[2].classList.add("hidden");
 }
 
-function loadFavCities() {
+function loadFavCities(_callback) {
 	fetch("https://localhost:3000/weather/favorites").then(response => response.text()).then(text => {
 			favCityNames = JSON.parse(text);
 			if(!Array.isArray(favCityNames)) {
 				favCityNames = [];
 			}
 			favCitiesRetrieved = true;
+			if(_callback) {
+				_callback();
+			}
 		}
 	).catch(function(error) {
 		console.log(error);
@@ -268,12 +355,12 @@ function loadFavCities() {
 	});
 }
 
-exports.loadFavCities = function() {
-	loadFavCities();
-	window.setTimeout(() => {
+exports.loadFavCities = function(_callback) {
+	loadFavCities(function() {
 		exports.favCityNames = favCityNames;
 		exports.favCitiesRetrieved = favCitiesRetrieved;
-	}, 200);
+		_callback();
+	});
 }
 
 function configureFavCityForm() {
@@ -284,12 +371,14 @@ function configureFavCityForm() {
 	});
 }
 
-
-function addFavCity() {
+function addFavCity(_callback) {
 	newCityName = document.getElementById("newcity").value;
 	document.getElementById("newcity").value = "";
 	if(favCityNames.includes(newCityName)) {
 		document.getElementById("newcity").placeholder = "Этот город уже есть в списке.";
+		if(_callback) {
+			_callback();
+		}
 		return;
 	} else {
 		document.getElementById("newcity").placeholder = "Добавить новый город";
@@ -303,21 +392,21 @@ function addFavCity() {
 	).then(function() {
 		favCityNames.push(newCityName);
 		createFavoriteCityBox(newCityName);
-		getWeather(newCityName, function(cityName, json) {printFavoriteWeather(cityName, json)});
+		getWeatherReal(newCityName, function(cityName, json) {printFavoriteWeatherReal(cityName, json, _callback)});
 	}).catch(function(error) {
 		document.getElementById("newcity").placeholder = "Ошибка соединения с базой данных.";
 	});
 }
 
-exports.addFavCity = function(newCityName) {
+exports.addFavCity = function(newCityName, _callback) {
 	document.getElementById("newcity").value = newCityName;
-	addFavCity();
-	window.setTimeout(() => {
+	addFavCity(function() {
 		exports.favCityNames = favCityNames;
-	}, 200);
+		_callback();
+	});
 }
 
-function deleteFavCity(cityName) {
+function deleteFavCity(cityName, _callback) {
 	fetch("https://localhost:3000/weather/favorites", {
 			method: 'DELETE',
 			body: cityName,
@@ -332,22 +421,30 @@ function deleteFavCity(cityName) {
 		}
 		var selectedWeatherBox = findCityBox(cityName);
 		selectedWeatherBox.parentNode.removeChild(selectedWeatherBox);
+		if(_callback) {
+			_callback();
+		}
 	}).catch(function(error) {
 		document.getElementById("newcity").placeholder = "Ошибка соединения с базой данных.";
+		if(_callback) {
+			_callback();
+		}
 		return;
 	});
 }
 
-exports.deleteFavCity = function(cityName) {
-	deleteFavCity(cityName);
-	window.setTimeout(() => {
+exports.deleteFavCity = function(cityName, _callback) {
+	deleteFavCity(cityName, function() {
 		exports.favCityNames = favCityNames;
-	}, 200);
+		if(_callback) {
+			_callback();
+		}
+	});
 }
 
 function reloadFavWeather(cityName) {
 	hideFavoriteWeather(findCityBox(cityName));
-	getWeather(cityName, function(cityName, json) {printFavoriteWeather(cityName, json)});
+	getWeatherReal(cityName, function(cityName, json) {printFavoriteWeatherReal(cityName, json)});
 }
 
 function configureLocalCityForm() {
@@ -368,10 +465,12 @@ function chooseLocalCity() {
 
 exports.setLocalCity = function(newCity) {
 	localCity = newCity;
+	exports.localCity = localCity;
 	geolocFinished = true;
 }
 
 exports.setFavCities = function(newCities) {
 	favCityNames = newCities;
+	exports.favCityNames = favCityNames;
 	favCitiesRetrieved = true;
 }
