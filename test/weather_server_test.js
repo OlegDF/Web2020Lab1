@@ -22,8 +22,7 @@ describe('Backend Test', function() {
 				fetchMock.get("https://api.openweathermap.org/data/2.5/weather?q=Omsk&appid=05084c9b7c23be334330469ae0d59085", mockResponseFromString(200, 
 				'{"coord":{"lon":73.4,"lat":55},"weather":[{"id":800,"main":"Clear","description":"clear sky","icon":"01n"}],"base":"stations","main":{"temp":259.15,"feels_like":253.58,"temp_min":259.15,"temp_max":259.15,"pressure":1044,"humidity":77},"visibility":10000,"wind":{"speed":3,"deg":10},"clouds":{"all":0},"dt":1606663636,"sys":{"type":1,"id":8960,"country":"RU","sunrise":1606619075,"sunset":1606646720},"timezone":21600,"id":1496153,"name":"Omsk","cod":200}'), { overwriteRoutes: false, repeat: 1 });
 				request('https://127.0.0.1:3000/').get("weather/city?q=Omsk").expect(200, '{"coord":{"lon":73.4,"lat":55},"weather":[{"id":800,"main":"Clear","description":"clear sky","icon":"01n"}],"base":"stations","main":{"temp":259.15,"feels_like":253.58,"temp_min":259.15,"temp_max":259.15,"pressure":1044,"humidity":77},"visibility":10000,"wind":{"speed":3,"deg":10},"clouds":{"all":0},"dt":1606663636,"sys":{"type":1,"id":8960,"country":"RU","sunrise":1606619075,"sunset":1606646720},"timezone":21600,"id":1496153,"name":"Omsk","cod":200}').end(function(err, res) {
-					if (err) return done(err);
-					done();
+					if (err) return done(err); else done();
 				});
 			});
 		});
@@ -41,6 +40,7 @@ describe('Backend Test', function() {
 	describe('GET /weather/coordinates', function() {
 		describe('With a correct response', function() {
 			it('should return the specified response, formatted as in the geonames API', function(done) {
+				let xml
 				fetchMock.get("http://api.geonames.org/findNearbyPlaceName?cities=cities5000&lat=55&lng=73.4&username=habsburgchin", mockResponseFromString(200, 
 				'<?xml version="1.0" encoding="UTF-8" standalone="no"?>\
 				<geonames>\
@@ -97,6 +97,15 @@ describe('Backend Test', function() {
 				if (err) return done(err); else done();
 			});
 		});
+		it('should return a 500 error', function(done) {
+			pgClientStub.query = sinon.stub().withArgs(`
+				SELECT * FROM favcities;
+				`)
+			.returns(Promise.reject());
+			request('https://127.0.0.1:3000/').get("weather/favorites").expect(500).end(function(err, res) {
+				if (err) return done(err); else done();
+			});
+		});
 	});
 	
 	describe('POST /weather/favorites', function() {
@@ -110,6 +119,16 @@ describe('Backend Test', function() {
 				if (err) return done(err); else done();
 			});
 		});
+		it('should return a 500 error', function(done) {
+			pgClientStub.query = sinon.stub().withArgs(`
+				INSERT INTO favcities VALUES
+				('London');
+				`)
+			.returns(Promise.reject());
+			request('https://127.0.0.1:3000/').post("weather/favorites").send("London").expect(500).end(function(err, res) {
+				if (err) return done(err); else done();
+			});
+		});
 	});
 	
 	describe('DELETE /weather/favorites', function() {
@@ -120,6 +139,16 @@ describe('Backend Test', function() {
 				`)
 			.resolves({rows: []})
 			request('https://127.0.0.1:3000/').delete("weather/favorites").send("London").expect(200).end(function(err, res) {
+				if (err) return done(err); else done();
+			});
+		});
+		it('should return a 500 error', function(done) {
+			pgClientStub.query = sinon.stub().withArgs(`
+				DELETE FROM favcities
+				WHERE name = 'London';
+				`)
+			.returns(Promise.reject());
+			request('https://127.0.0.1:3000/').delete("weather/favorites").send("London").expect(500).end(function(err, res) {
 				if (err) return done(err); else done();
 			});
 		});
