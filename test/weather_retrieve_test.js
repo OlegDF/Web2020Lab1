@@ -6,7 +6,31 @@ const fetchMock = require('fetch-mock');
 const geolocate = require('mock-geolocation');
 const weather_retrieve = require("../weather_retrieve.js");
 
+
 describe('Frontend Test', function() {
+	describe('#iniCategories()', function() {
+		it('should fill in the wind direction, wind speed and cloud category arrays', function() {
+			weather_retrieve.iniCategories(function() {
+				expect(weather_retrieve.degWind.length).to.equal(17);
+				expect(weather_retrieve.degWind[0][0]).to.equal(11.25);
+				expect(weather_retrieve.degWind[0][1]).to.equal('North');
+				expect(weather_retrieve.degWind[1][0]).to.equal(33.75);
+				expect(weather_retrieve.degWind[1][1]).to.equal('North-northeast');
+				expect(weather_retrieve.speedWind.length).to.equal(8);
+				expect(weather_retrieve.speedWind[0][0]).to.equal(0.2);
+				expect(weather_retrieve.speedWind[0][1]).to.equal('Calm');
+				expect(weather_retrieve.speedWind[1][0]).to.equal(1.5);
+				expect(weather_retrieve.speedWind[1][1]).to.equal('Light air');
+				expect(weather_retrieve.cloudCategories.length).to.equal(4);
+				expect(weather_retrieve.cloudCategories[0][0]).to.equal(25);
+				expect(weather_retrieve.cloudCategories[0][1]).to.equal('Clear Skies');
+				expect(weather_retrieve.cloudCategories[1][0]).to.equal(50);
+				expect(weather_retrieve.cloudCategories[1][1]).to.equal('Scattered Clouds');
+			});
+		});
+	});
+	
+	
 	describe('#loadFavCities()', function() {
 		describe('With a correct response', function() {
 			it('should start with the favCitiesRetrieved flag set to False', function() {
