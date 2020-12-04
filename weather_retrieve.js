@@ -1,8 +1,8 @@
 const sinon = require("sinon");
 
-let degWind = [[11.25, 'North'], [33.75, 'North-northeast'], [56.25, 'Northeast'], [78.75, 'East-northeast'], [101.25, 'East'], [123.75, 'East-southeast'], [146.25, 'Southeast'], [168.75, 'South-southeast'], [191.25, 'South'], [213.75, 'South-southwest'], [236.25, 'Southwest'], [258.75, 'West-southwest'], [281.25, 'West'], [303.75, 'West-northwest'], [326.25, 'Northwest'], [348.75, 'North-northwest'], [360, 'North']];
-let speedWind = [[0.2, 'Calm'], [1.5, 'Light air'], [3.3, 'Light breeze'], [5.4, 'Gentle wind'], [7.9, 'Moderate wind'], [10.7, 'Fresh breeze'], [13.8, 'Strong wind'], [17.1, 'High wind']];
-let cloudCategories = [[25, 'Clear Skies'], [50, 'Scattered Clouds'], [76, 'Broken Clouds'], [100, 'Overcast']]
+var degWind;
+var speedWind;
+var cloudCategories;
 
 var favCityNames = [];
 var localCity = 'Saint Petersburg'
@@ -11,6 +11,10 @@ var geolocRefused = false;
 var favCitiesRetrieved = false;
 var favCityBoxesInitialized = false;
 var localBox;
+
+var getWeatherReal;
+var printLocalWeatherReal;
+var printFavoriteWeatherReal;
 
 var geolocCallback;
 
@@ -21,6 +25,10 @@ exports.favCitiesRetrieved = favCitiesRetrieved;
 exports.favCityBoxesInitialized = favCityBoxesInitialized;
 
 function loadWeather() {
+	iniCategories();
+	getWeatherReal = getWeather;
+	printFavoriteWeatherReal = printFavoriteWeather;
+	printLocalWeatherReal = printLocalWeather;
 	loadFavCities();
 	getLocation();
 	loadLocalBox();
@@ -28,6 +36,22 @@ function loadWeather() {
 	configureFavCityForm();
 	initializeFavoriteCityBoxes();
 	printFavoriteBoxes();
+}
+
+function iniCategories() {
+	degWind = [[11.25, 'North'], [33.75, 'North-northeast'], [56.25, 'Northeast'], [78.75, 'East-northeast'], [101.25, 'East'], [123.75, 'East-southeast'], [146.25, 'Southeast'], [168.75, 'South-southeast'], [191.25, 'South'], [213.75, 'South-southwest'], [236.25, 'Southwest'], [258.75, 'West-southwest'], [281.25, 'West'], [303.75, 'West-northwest'], [326.25, 'Northwest'], [348.75, 'North-northwest'], [360, 'North']];
+	speedWind = [[0.2, 'Calm'], [1.5, 'Light air'], [3.3, 'Light breeze'], [5.4, 'Gentle wind'], [7.9, 'Moderate wind'], [10.7, 'Fresh breeze'], [13.8, 'Strong wind'], [17.1, 'High wind']];
+	cloudCategories = [[25, 'Clear Skies'], [50, 'Scattered Clouds'], [76, 'Broken Clouds'], [100, 'Overcast']];
+}
+
+exports.iniCategories = function(_callback) {
+	iniCategories();
+	exports.degWind = degWind;
+	exports.speedWind = speedWind;
+	exports.cloudCategories = cloudCategories;
+	if(_callback) {
+		_callback();
+	}
 }
 
 function getLocation(_callback) {
@@ -130,8 +154,6 @@ function getWeather(cityName, _callback, _test_callback) {
 	});
 }
 
-var getWeatherReal = getWeather;
-
 exports.getWeatherSpy = function() {
 	getWeatherReal = sinon.spy(getWeather);
 	return getWeatherReal;
@@ -167,8 +189,6 @@ function printLocalWeather(localCity, weatherJson, _callback) {
 		_callback();
 	}
 }
-
-var printLocalWeatherReal = printLocalWeather;
 
 exports.printLocalWeatherSpy = function() {
 	printLocalWeatherReal = sinon.spy(printLocalWeather);
@@ -298,8 +318,6 @@ function printFavoriteWeather(cityName, weatherJson, _callback) {
 		_callback();
 	}
 }
-
-var printFavoriteWeatherReal = printFavoriteWeather;
 
 exports.printFavoriteWeatherSpy = function() {
 	printFavoriteWeatherReal = sinon.spy(printFavoriteWeather);
